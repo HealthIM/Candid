@@ -16,7 +16,7 @@ else {
      	style_path  = sys.args[5],
      	// dest_path   = sys.args[6],
      	// file_type   = sys.args[7],
-     	// qualtity    = sys.args[8],
+     	// quality     = sys.args[8],
         style = "<style></style>";
 
     loadJSfile(script_path);
@@ -32,13 +32,10 @@ else {
 	var image_name = getFileNameFromPath(script_path) +"_"+ id + ".png"
 
 	if (page.render(image_name)){
-		console.log("......................................................");
 		console.log(image_name + " created!");
-		console.log("......................................................");
 	}else {
-		console.log("......................................................");
 		console.log("An error occured rendering the image.");
-		console.log("......................................................");
+		phantom.exit(1);
 	};    	
 
 	phantom.exit();
@@ -54,9 +51,6 @@ function loadJSfile(file_path){
 	if (!phantom.injectJs(file_path)) {
 		console.log('Error loading:' + file_path);
 		phantom.exit(1);
-	}
-	else {
-		console.log('Loaded :' + file_path);
 	}
 }	
 
