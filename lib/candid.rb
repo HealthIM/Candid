@@ -1,21 +1,25 @@
 class Candid
 
-	def self.create(script_path, options = {})
+	def self.create(script, options = {})
 
-        options[:id]         ||= 'svg'
-        options[:style_path] ||= nil
-        options[:data_path]  ||= nil
+        options[:id]    ||= 'svg'
+        options[:style] ||= nil
+        options[:data]  ||= nil
 
-		system "phantomjs #{candid_gem_path}/assets/candid.js \
+        # TODO  options[:file_destination] ||= nil
+        # TODO  options[:quality]          ||= nil # (the defaults depend on the file_type & are handled by phantomjs)
+        # TODO  options[:file_type]        ||= 'png'
+
+		system "phantomjs #{candid_gem_lib_path}/assets/candid.js \
 		 #{options[:id]} \
-		 #{candid_gem_path}/.. \
-		 #{script_path} \
-		 #{options[:data_path]} \
-		 #{options[:style_path]}" \
+		 #{candid_gem_lib_path}/.. \
+		 #{script} \
+		 #{options[:data]} \
+		 #{options[:style]}" \
 	end
 
     private
-	def self.candid_gem_path
+	def self.candid_gem_lib_path
 	  File.join(File.dirname(File.expand_path(__FILE__)))
 	end
 
