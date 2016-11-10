@@ -9,27 +9,43 @@ if (sys.args.length < 1) {
 	phantom.exit(1);
 }
 else {
-    var id          = sys.args[1]
-    	gem_dir     = sys.args[2],
-        script_path = sys.args[3],
-     	json_path   = sys.args[4],
-     	style_path  = sys.args[5],
+    var gem_dir = sys.args[1],
+    	id      = sys.args[2]
+        scripts = arrayFromString(sys.args[3]),
+     	styles  = arrayFromString(sys.args[4]),
+     	data    = arrayFromString(sys.args[5]),
      	// dest_path   = sys.args[6],
      	// file_type   = sys.args[7],
      	// quality     = sys.args[8],
-        style = "<style></style>";
+        style = "";
 
-    loadJSfile(script_path);
+
 	loadJSfile(gem_dir + D3_PATH);
-	if (json_path) loadJSfile(json_path);
-	if (style_path) style = "<style>" + fs.read(style_path) + "</style>";
+
+// linking external styles sheets through js : http://stackoverflow.com/questions/574944/how-to-load-up-css-files-using-javascript
+    style += "<style>"
+	for (i in styles) {
+    	style += fs.read(styles[i]);
+    }
+    style += "</style>"
+
+
+    for (i in data) {
+    	loadJSfile(data[i]);
+    }
+
+ 	for (i in scripts) {
+    	loadJSfile(scripts[i]);
+    }
+
     
     eval(window.onload());
+
 
     var svg      = new XMLSerializer().serializeToString(d3.select(id).node());  
 	page.content = style + svg;
 
-	var image_name = getFileNameFromPath(script_path) +"_"+ id + ".png"
+	var image_name = getFileNameFromPath(scripts[0]) +"_"+ id + ".png"
 
 	if (page.render(image_name)){
 		console.log(image_name + " created!");
@@ -38,7 +54,9 @@ else {
 		phantom.exit(1);
 	};    	
 
-	phantom.exit();
+	page.close();
+	phantom.exit(0);
+	
 };
 
 
@@ -54,7 +72,10 @@ function loadJSfile(file_path){
 	}
 }	
 
+function arrayFromString(str){
+	return JSON.parse(str);
+}	
 
-
-
-
+   
+// https://medium.com/@stockholmux/besting-phantomjs-font-problems-ee22795f5c0b#.5gyuus8p8
+// otherwise just use system fonts

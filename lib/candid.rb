@@ -1,22 +1,30 @@
 class Candid
 
-	def self.create(script, options = {})
+	def self.create(options = {})
+     
+        options[:id]       ||= 'svg'
+        options[:styles]     = options[:styles ].to_s
+        options[:scripts]    = options[:scripts].to_s
+        options[:data_files] = options[:data_files].to_s
 
-        options[:id]    ||= 'svg'
-        options[:style] ||= nil
-        options[:data]  ||= nil
+        # TODO  options[:local_assets]      = options[:local_assets].to_s
+        # TODO  options[:ext_assets]        = options[:ext_assets].to_s
+        # TODO  options[:images]            = options[:images].to_s
 
-        # TODO  options[:file_destination] ||= nil
-        # TODO  options[:quality]          ||= nil # (the defaults depend on the file_type & are handled by phantomjs)
+        # TODO  options[:file_destination] ||= .
+        # TODO  options[:quality]          ||= 0 # phantomjs will handle the default quility in this case
         # TODO  options[:file_type]        ||= 'png'
-        # TODO  options[:assets]           ||= nil # so users can load their own libraries (! wow, great idea) and then can get rid of vendor dir
 
-		system "phantomjs #{candid_gem_root_path}/bin/candid.js \
-		 #{options[:id]} \
-		 #{candid_gem_root_path}\
-		 #{script} \
-		 #{options[:data]} \
-		 #{options[:style]}" 
+		system "phantomjs \
+		 #{candid_gem_root_path}/bin/candid2.js \
+		 #{candid_gem_root_path} \
+		 #{options[:id]        } \
+		 #{options[:scripts]   } \ 
+		 #{options[:styles]    } \
+		 #{options[:data_files]}" 
+
+		 # TODO return file path of new image
+		# return options[:file_destination]
 	end
 
     private
@@ -25,5 +33,6 @@ class Candid
 	end
 
 end
+
 
 
