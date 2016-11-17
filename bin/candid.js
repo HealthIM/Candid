@@ -9,26 +9,43 @@ if (sys.args.length < 1) {
 	phantom.exit(1);
 }
 else {
-    var gem_dir = sys.args[1],
-    	id      = sys.args[2]
-        scripts = arrayFromString(sys.args[3]),
-     	styles  = arrayFromString(sys.args[4]),
-     	data    = arrayFromString(sys.args[5]),
-     	// dest_path   = sys.args[6],
-     	// file_type   = sys.args[7],
-     	// quality     = sys.args[8],
-        style = "";
-
+	var gem_dir, id, scripts, styles, data, options, style, image_path;
+ 
+	try {
+	    gem_dir    =            sys.args[1];
+        scripts    = JSON.parse(sys.args[2]);
+     	styles     = JSON.parse(sys.args[3]);
+     	data       = JSON.parse(sys.args[4]);
+     	include_js = JSON.parse(sys.args[5]);
+     	options    = JSON.parse(sys.args[6]);
+     	id         = options['id']
+	} catch(err) {
+		console.log("Error parsing arguments.");
+		console.log(sys.args);
+		console.log(err)
+		page.close();
+		phantom.exit(1);
+	}
 
 	loadJSfile(gem_dir + D3_PATH);
 
-// linking external styles sheets through js : http://stackoverflow.com/questions/574944/how-to-load-up-css-files-using-javascript
-    style += "<style>"
+
+	var file_dest = options['file_dest'];
+	var file_name = options['file_name'];
+	var ext       = options['ext'];
+	// var quality   = options['quality'  ];
+
+    style  = "<style>"
 	for (i in styles) {
     	style += fs.read(styles[i]);
     }
     style += "</style>"
 
+
+	for (i in include_js) {
+		console.log(include_js[i])
+	    loadJSfile(include_js[i]);
+	}
 
     for (i in data) {
     	loadJSfile(data[i]);
@@ -38,18 +55,36 @@ else {
     	loadJSfile(scripts[i]);
     }
 
-    
-    eval(window.onload());
-
+    try{
+    	eval(window.onload());
+	}
+	catch(err){
+		console.log(err);
+		page.close();
+		phantom.exit(0);
+	}
 
     var svg      = new XMLSerializer().serializeToString(d3.select(id).node());  
 	page.content = style + svg;
 
-	var image_name = getFileNameFromPath(scripts[0]) +"_"+ id + ".png"
+	if (file_dest) {
+        if (!fs.changeWorkingDirectory(fs.workingDirectory + file_dest)) {
+        	console.log("Unable to access: " + fs.workingDirectory + file_dest);	
+			page.close();
+			phantom.exit(0);
+        }
+	}
 
-	if (page.render(image_name)){
-		console.log(image_name + " created!");
-	}else {
+	if (!file_name) file_name = id;
+	
+	file_name = file_name + '.' + ext; 
+    
+    var quality = 75;
+    ext === 'svg' ? quality = 0 : quality = 100;
+
+	if (page.render(file_name), {quality: quality}){
+		console.log(file_name + " created!");
+	} else {
 		console.log("An error occured rendering the image.");
 		phantom.exit(1);
 	};    	
@@ -67,15 +102,25 @@ function getFileNameFromPath(file_path){
 
 function loadJSfile(file_path){
 	if (!phantom.injectJs(file_path)) {
-		console.log('Error loading:' + file_path);
-		phantom.exit(1);
+		console.log('Error loading: ' + file_path);
+		// phantom.exit(1);
 	}
 }	
 
-function arrayFromString(str){
-	return JSON.parse(str);
-}	
+function readFile(file_path){
+	try {fs.read(file_path);}
+	catch(err) {
+		console.log('Unable to load ' + file_path);
+		console.log(err);
+		phantom.exit(1);
+	}
 
+}
+
+
+// output an img file with error msg??
    
 // https://medium.com/@stockholmux/besting-phantomjs-font-problems-ee22795f5c0b#.5gyuus8p8
 // otherwise just use system fonts
+
+// linking external styles sheets through js : http://stackoverflow.com/questions/574944/how-to-load-up-css-files-using-javascript
