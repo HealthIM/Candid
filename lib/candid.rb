@@ -16,7 +16,7 @@ class Candid
         # options[:ext_assets]   ||= options[:ext_assets].to_s
         # options[:images]       ||= options[:images].to_s
 
-        include_js = include_js.map{ |data| include_raw_data(data) }
+        include_js = include_js.each_with_index.map  { |data, i| include_raw_data(data, i) }
 
 
         p include_js
@@ -36,17 +36,40 @@ class Candid
 		# return options[:file_destination]
 	end
 
+     def self.serialize_svg_to_string(scripts = [], styles = [], data_src = [], include_js = [], options = {})
+     
+        options[:id]         ||= 'svg'
+        options[:file_name]  ||= options[:file_name]
+        options[:ext]        ||= 'png'
+
+
+        include_js = include_js.each_with_index.map  { |data, i| include_raw_data(data, i) }
+
+
+        styles     = styles.to_s
+        scripts    = scripts.to_s
+        include_js = include_js.to_s
+        data_src   = data_src.to_s
+        options    = hash_to_s(options)
+        
+        
+        system 'js', candid_gem_root_path+'/bin/serialize.js', candid_gem_root_path, scripts, styles, data_src, include_js, options
+      
+        # TODO return file path of new image
+        # return options[:file_destination]
+    end
+
 
     def self.save_image(name, dest_path)
         # TODO 
     end
 
     private
-    def self.include_raw_data(raw_data)
+    def self.include_raw_data(raw_data, i)
 
         data         = raw_data[:data].to_json
         reference_as = raw_data[:reference_as]
-        file_name    = 'test.js'
+        file_name    = 'test' + i.to_s + '.js'
         
         # unless Dir.exist? tmp_dir
         #     make_tmp_dir
