@@ -16,6 +16,10 @@ class Candid
         system 'phantomjs', candid_gem_root_path+'/lib/candid.js', candid_gem_root_path,scripts.to_s, styles.to_s, include_js.to_s, options
 	end
 
+    def self.create(scripts = [], styles = [], data_src =[] include_js = [], options = {})
+        snapshot scripts, styles, include_js, options
+    end
+
     private
     def self.store_in_tmp(raw_data)
         data         = raw_data[:data].to_json
