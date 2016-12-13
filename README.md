@@ -1,18 +1,9 @@
 
 # Candid
 
-Candid is a Ruby gem that renders images from JavaScript with PhantomJS.
+Candid is a Ruby gem that renders images from JavaScript with PhantomJS. The PhantomJs gem is used to install PhantomJS on your system.
 
-Candid comes with D3.js installed.
-
-To use Candid you must have PhantomJS install on your machine.
-
-- http://phantomjs.org/
-
-PhantomJS can also be installed via a Ruby Gem 
-
-- https://github.com/colszowka/phantomjs-gem
-
+Candid comes with D3.js, JQuery, and Chart.js installed.
 
 ### How to use:
 
@@ -25,9 +16,10 @@ Candid.snapshot(["somescript.js"],
                 options = {})
 ```
 
+### Note:
 `somescript.js` must contain the `window.onload` function
 
-    
+
 ### How to use (Rails):
 
 Include the following in your Gemfile

@@ -1,5 +1,6 @@
 require 'json'
 require 'tempfile'
+require 'phantomjs'
 
 class Candid
 
@@ -13,8 +14,15 @@ class Candid
 
         include_js = include_js.each_with_index.map  { |data, i| store_in_tmp(data) }
     
-        system 'phantomjs', candid_gem_root_path+'/lib/candid.js', candid_gem_root_path,scripts.to_s, styles.to_s, include_js.to_s, options
-	end
+        Phantomjs.run(candid_gem_root_path+'/lib/candid.js', 
+                        candid_gem_root_path,
+                        scripts.to_s, 
+                        styles.to_s, 
+                        include_js.to_s, 
+                        options)  { |line| 
+                            puts line 
+                        }
+    end
 
     ### DEPRECIATED ###
     def self.create(scripts = [], styles = [], data_src =[], include_js = [], options = {})
@@ -37,7 +45,6 @@ class Candid
     def self.hash_to_s(h)
         "{" + (h.map {|k, v| "\"" + k.to_s + "\"" + ":\""+v+"\""   }).join(",") + "}"
     end
-
 
     private
 	def self.candid_gem_root_path
