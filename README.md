@@ -16,9 +16,7 @@ Candid.snapshot(["somescript.js"],
                 options = {})
 ```
 
-### Note:
-`somescript.js` must contain the `window.onload` function
-
+### Note: `somescript.js` must contain the `window.onload` function
 
 ### How to use (Rails):
 
