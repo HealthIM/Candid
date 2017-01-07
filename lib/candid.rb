@@ -1,50 +1,55 @@
 require 'json'
 require 'tempfile'
-# require 'phantomjs'
 
 class Candid
 
 	def self.snapshot(scripts = [], styles = [], include_js = [], options = {})
-     
-        options[:id]         ||= 'svg'
-        options[:file_name]  ||= options[:file_name]
-        options[:ext]        ||= 'png'
+      
+        options[:id]   ||= 'svg'
+        options[:ext]  ||= 'png'
+        options[:save] ||= 'tmp'
 
+        if options[:save] == 'local'
+            options[:file_dest] ||= ""
+            options[:file_name] ||= File.basename Tempfile.new('candid')
+            new_path = options[:file_dest] +'/'+ options[:file_name] + '.' + options[:ext] 
+        elsif options[:save] == 'remote'
+            options[:file_dest] ||= "."
+            options[:file_name] ||= File.basename Tempfile.new('candid')
+            new_path = options[:file_dest] +'/'+ options[:file_name] + '.' + options[:ext] 
+        else # save in tmp
+            new_path = Tempfile.new('candid')
+            options[:file_dest] = File.dirname  new_path
+            options[:file_name] = File.basename new_path
+        end
+        
         options =  hash_to_s(options)
-
-        include_js = include_js.each_with_index.map  { |data, i| store_in_tmp(data) }
+        tmp_vars = include_js.map { |data| store_tmp_var(data[0], data[1]) }
     
         system 'phantomjs', candid_gem_root_path+'/lib/candid.js', 
                             candid_gem_root_path,
                             scripts.to_s, 
                             styles.to_s, 
-                            include_js.to_s, 
+                            tmp_vars.to_s, 
                             options
-
-        # Phantomjs.run(candid_gem_root_path+'/lib/candid.js', 
-        #                 candid_gem_root_path,
-        #                 scripts.to_s, 
-        #                 styles.to_s, 
-        #                 include_js.to_s, 
-        #                 options)  { |line| 
-        #                     puts line 
-        #                 }
-    end
-
-    ### DEPRECIATED ###
-    def self.create(scripts = [], styles = [], data_src =[], include_js = [], options = {})
-        snapshot scripts, styles, include_js, options
+        new_path
     end
 
     private
-    def self.store_in_tmp(raw_data)
-        data         = raw_data[:data].to_json
-        reference_as = raw_data[:reference_as]
-        
+    def self.store_tmp_var(k, v)
+        data = v.to_json
+        ref  = k.to_s
+
         file = Tempfile.new('candid')
-        file.write "var #{reference_as} = #{data};"
+        file.write "var #{ref} = #{data};"
         file.close
         
+        file.path
+    end
+
+    def self.tmp_img_path
+        file = Tempfile.new('candid')
+        file.close # do I need to close this?
         file.path
     end
 
