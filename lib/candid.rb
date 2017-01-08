@@ -10,29 +10,33 @@ class Candid
         options[:save] ||= 'tmp'
 
         if options[:save] == 'local'
-            options[:file_dest] ||= ""
+            options[:file_dest] ||= "."
             options[:file_name] ||= File.basename Tempfile.new('candid')
-            new_path = options[:file_dest] +'/'+ options[:file_name] + '.' + options[:ext] 
         elsif options[:save] == 'remote'
             options[:file_dest] ||= "."
             options[:file_name] ||= File.basename Tempfile.new('candid')
-            new_path = options[:file_dest] +'/'+ options[:file_name] + '.' + options[:ext] 
         else # save in tmp
-            new_path = Tempfile.new('candid')
-            options[:file_dest] = File.dirname  new_path
-            options[:file_name] = File.basename new_path
+            tmp_file = Tempfile.new('candid')
+            options[:file_dest] ||= File.dirname tmp_file
+            options[:file_name] = File.basename tmp_file
         end
+
+        options[:file_name] = options[:file_name] + '.' + options[:ext] 
+
+        new_path  = options[:file_dest] +'/'+ options[:file_name]  
+        file_name = options[:file_name] 
         
         options =  hash_to_s(options)
         tmp_vars = include_js.map { |data| store_tmp_var(data[0], data[1]) }
-    
+
         system 'phantomjs', candid_gem_root_path+'/lib/candid.js', 
                             candid_gem_root_path,
                             scripts.to_s, 
                             styles.to_s, 
                             tmp_vars.to_s, 
                             options
-        new_path
+
+        { path: new_path, name: file_name }
     end
 
     private
@@ -62,6 +66,7 @@ class Candid
 	def self.candid_gem_root_path
 	  File.join(File.dirname(File.expand_path(__FILE__)), '..')
 	end
+
 
 end
 

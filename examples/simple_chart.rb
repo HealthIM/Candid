@@ -4,5 +4,5 @@ Candid.snapshot(['javascripts/simplechart.js'],
 		            ['styles/style.css'], 
 		            {data: [1, 3, 9] , title: 'A Simple Bar Chart!'},
 		            options = {file_dest: '/images', 
-		             		   file_name: 'chart',
-		             		   save: 'local'})
+		             		   save: 'local', 
+		             		   file_name: 'simple_chart'})
