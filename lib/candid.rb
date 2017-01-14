@@ -1,5 +1,6 @@
 require 'json'
 require 'tempfile'
+require 'tmpdir'
 
 class Candid
 
@@ -17,7 +18,11 @@ class Candid
             options[:file_name] ||= File.basename Tempfile.new('candid')
         else # save in tmp
             tmp_file = Tempfile.new('candid')
-            options[:file_dest] ||= File.dirname tmp_file
+            if options[:rails] == 'true'
+                options[:file_dest] = 'public/tmp'
+            else
+                options[:file_dest]|= File.dirname tmp_file
+            end
             options[:file_name] = File.basename tmp_file
         end
 
@@ -38,6 +43,7 @@ class Candid
 
         { path: new_path, name: file_name }
     end
+
 
     private
     def self.store_tmp_var(k, v)
