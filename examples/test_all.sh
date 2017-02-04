@@ -12,6 +12,4 @@ ruby no_name.rb
 
 ruby save_local.rb 
 
-ruby save_remote.rb 
-
 echo "Examples Complete"

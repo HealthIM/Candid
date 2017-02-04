@@ -6,14 +6,12 @@ class Candid
 
 	def self.snapshot(scripts = [], styles = [], include_js = [], options = {})
       
-        options[:id]   ||= 'svg'
-        options[:ext]  ||= 'png'
-        options[:save] ||= 'tmp'
+        options[:id]    ||= 'svg'
+        options[:ext]   ||= 'png'
+        options[:save]  ||= 'tmp'
+        options[:rails] ||= 'false'
 
         if options[:save] == 'local'
-            options[:file_dest] ||= "."
-            options[:file_name] ||= File.basename Tempfile.new('candid')
-        elsif options[:save] == 'remote'
             options[:file_dest] ||= "."
             options[:file_name] ||= File.basename Tempfile.new('candid')
         else # save in tmp
@@ -21,7 +19,7 @@ class Candid
             if options[:rails] == 'true'
                 options[:file_dest] = 'public/tmp'
             else
-                options[:file_dest]|= File.dirname tmp_file
+                options[:file_dest] = File.dirname tmp_file
             end
             options[:file_name] = File.basename tmp_file
         end
@@ -29,6 +27,7 @@ class Candid
         options[:file_name] = options[:file_name] + '.' + options[:ext] 
 
         new_path  = options[:file_dest] +'/'+ options[:file_name]  
+        new_path  = ""  
         file_name = options[:file_name] 
         
         options =  hash_to_s(options)
@@ -59,13 +58,17 @@ class Candid
 
     def self.tmp_img_path
         file = Tempfile.new('candid')
-        file.close # do I need to close this?
+        file.close 
         file.path
     end
 
     private
     def self.hash_to_s(h)
-        "{" + (h.map {|k, v| "\"" + k.to_s + "\"" + ":\""+v+"\""   }).join(",") + "}"
+        if h == {}
+            "{}"
+        else
+            "{" + (h.map {|k, v| "\"" + k.to_s + "\"" + ":\""+v+"\""   }).join(",") + "}"
+        end
     end
 
     private
