@@ -1,48 +1,59 @@
-
 # Candid
 
-Candid is a Ruby gem that renders images from JavaScript with PhantomJS. The PhantomJs gem is used to install PhantomJS on your system.
+Candid is a Ruby gem that renders images from SVGs via PhantomJS. 
 
 Candid comes with D3.js, JQuery, and Chart.js installed.
 
-### How to use:
+**See the Examples directory to get started!**
+
+### How To:
+To create an image Candid requires at least one JavaScript file, and can also a accept stylesheets, variables, and additional options. 
 
 ```
 require 'candid'
 
-Candid.snapshot(["somescript.js"], 
-                ["somestyle.css"], 
-                [{data: [1, 3, 10], reference_as:'data'}], 
-                options = {})
+img = Candid.snapshot(["somescript.js"], ["somestyle.css"], {data: [1, 3, 10]}, options: {id: 'chart'})
 ```
+Candid will return a hash containing the image name, and the file path (including the name).
 
-### Note: `somescript.js` must contain the `window.onload` function
+#### Note: `somescript.js` must contain the `window.onload` function. This ensures that your JS gets executed.
 
-### How to use (Rails):
-
+### Rails:
 Include the following in your Gemfile
 
 `gem 'candid'`
 
-### Options and Defaults:
+Always set the `rails` option to 'true' in snapshot options, like so:
 
-`options = {id: 'svg', file_name: 'my_image', ext: 'png'}`
+`img = Candid.snapshot(["somescript.js"], ["somestyle.css"], {data: [1, 3, 10]}, options: {rails: 'true'})`
+
+Candid will automatically save to `public/tmp` in your application's directory.
+
+### Options and Defaults:
+Ex. 
+`options = {id: 'svg', file_name: 'my_image', ext: 'png', rails: 'false'}`
+
+
+**:save**
+- Defaults to 'tmp'
+- Can also be 'local' if you want to save somewhere in your working directory.
 
 **:id**
+- This is the id of the svg you are saving as an image.
+- Defaults to 'svg'.
 
-- Defaults to 'svg'
-  
+  **:ext**
+- Defaults to 'png'.
+- Can also be 'jpeg' or 'gif'.
+
 **:file_name**
-
-- Defaults to the id
+- Defaults to a random temporary name.
   
-**:ext**
-
-- Defaults to 'png'
-- Can also be 'jpeg' or 'gif'
-
 **:file_dest**
+- Defaults to 'tmp'.
 
-- Defaults to working directory
+**:rails**
+- Defaults to 'false'.
+- Can also be 'true'.
 
 
