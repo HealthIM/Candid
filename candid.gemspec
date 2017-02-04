@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'candid'
-  s.version     = '0.0.1'
-  s.date        = '2016-10-31'
+  s.version     = '1.0.0'
+  s.date        = '2017-02-04'
   s.summary     = 'Renders images from JavaScript with PhantomJS.'
   s.description = 'Candid is a Ruby gem that renders images from JavaScript with PhantomJS.'
   s.authors     = ["Julia Karkowska"]
