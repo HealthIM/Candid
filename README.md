@@ -42,7 +42,7 @@ Ex.
 - This is the id of the svg you are saving as an image.
 - Defaults to 'svg'.
 
-  **:ext**
+**:ext**
 - Defaults to 'png'.
 - Can also be 'jpeg' or 'gif'.
 
