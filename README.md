@@ -56,4 +56,6 @@ Ex.
 - Defaults to 'false'.
 - Can also be 'true'.
 
+### Developed by HealthIM Inc.
+### Primary Author: Julia Karkowska
 
